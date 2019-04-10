@@ -1,4 +1,4 @@
-#Discrete-Time Variable Filter implementation
+#Discrete-Time Varying Filter implementation
 #This code is based on the filtering algorithm on the ff:
 #Original paper: Dynamic mass measurement using a discrete time-variant filter
 #Author: Przemyslaw Pietrzak
