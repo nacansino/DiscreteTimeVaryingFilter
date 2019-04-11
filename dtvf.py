@@ -22,10 +22,11 @@ class DiscTimeVarFilt:
         lmb_s = (1-lmb)/2
 
         #compute filtered value
-        y[0] = lmb[0]*ys+lmb_s[0]*(x[0] + xs)
+        lmb_sum=lmb+lmb_s
+        y[0] = (lmb[0]*ys+lmb_s[0]*(x[0] + xs))/lmb_sum[0]
         for n in np.arange(1,N):
             #compute wc and lambda
-            y[n] = lmb[n]*y[n-1]+lmb_s[n]*(x[0] + x[n-1])
+            y[n] = (lmb[n]*y[n-1]+lmb_s[n]*(x[0] + x[n-1]))/lmb_sum[n]
         return y
 
     def __init__(self, Ts, f_o = 200, f_inf = 0.01, k = 2, N_alpha = 150, alpha = math.e):
