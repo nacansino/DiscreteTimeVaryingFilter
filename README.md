@@ -1,5 +1,5 @@
 # Discrete Time Varying Filter for Dynamic Mass Measurement System
-# Author: nacansino
+## Author: nacansino
 
 This code is based on the filtering algorithm discussed in the following paper:
 
