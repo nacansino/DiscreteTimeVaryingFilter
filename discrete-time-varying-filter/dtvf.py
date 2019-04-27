@@ -18,18 +18,18 @@ class MyException(Exception):
 class DiscTimeVarFilt:
     def apply_filter(self, x, ys = 0, xs = 0):
         x=np.asarray(x)
+        y=np.zeros(x.shape)
         N=x.shape[0]
-        y=np.zeros((N,1))
         wc = self.w_inf + (self.w_o-self.w_inf)*self.alpha**(np.arange(0,N)/self.N_alpha)
         lmb = (-1)*((wc-2*self.xi/self.Ts)/(wc+2*self.xi/self.Ts))
         lmb_s = (1-lmb)/2
 
         #compute filtered value
         lmb_sum=lmb+lmb_s
-        y[0] = (lmb[0]*ys+lmb_s[0]*(x[0] + xs))/lmb_sum[0]
+        y[0, :] = (lmb[0]*ys+lmb_s[0]*(x[0,:] + xs))/lmb_sum[0]
         for n in np.arange(1,N):
             #compute wc and lambda
-            y[n] = (lmb[n]*y[n-1]+lmb_s[n]*(x[0] + x[n-1]))/lmb_sum[n]
+            y[n, :] = (lmb[n]*y[n-1, :]+lmb_s[n]*(x[0] + x[n-1]))/lmb_sum[n]
         return y
 
     def wc_fxn(self, x):
