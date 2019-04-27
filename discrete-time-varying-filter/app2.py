@@ -69,7 +69,7 @@ def main():
     df = df.iloc[:,1:]
     df.plot()
     y_1 = flt.apply_filter(df,xs=0, ys=0)
-    wvf_plot(y_1[1:250])
+    wvf_plot(y_1)
     plt.plot(flt.wc_fxn(df.iloc[:,1]))
     
 main()

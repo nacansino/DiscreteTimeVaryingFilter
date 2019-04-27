@@ -32,10 +32,23 @@ class DiscTimeVarFilt:
             y[n] = (lmb[n]*y[n-1]+lmb_s[n]*(x[0] + x[n-1]))/lmb_sum[n]
         return y
 
+    def wc_fxn(self, x):
+        x=np.asarray(x)
+        N=x.size
+        y=np.zeros((N,1))
+        wc = self.w_inf + (self.w_o-self.w_inf)*self.alpha**(np.arange(0,N)/self.N_alpha)
+        return wc
+    
+    def print_param(self):
+        attrs = vars(self)
+        print(', '.join("%s: %s" % item for item in attrs.items()))
+        print("hello world")
+        return None
+
     def __init__(self, Ts, f_o = 200, f_inf = 0.01, k = 2, N_alpha = 150, alpha = 0.5):
         if not (alpha>0 and alpha<=1):
             raise MyException("alpha must be in the range (0,1]!")
-        return None
+            return None
         self.alpha = alpha
         self.N_alpha = N_alpha
         self.k = k
@@ -45,13 +58,6 @@ class DiscTimeVarFilt:
         self.xi = math.sqrt(2**(k) - 1)
     #def set_params(self):
     
-    def wc_fxn(self, x):
-        x=np.asarray(x)
-        N=x.size
-        y=np.zeros((N,1))
-        wc = self.w_inf + (self.w_o-self.w_inf)*self.alpha**(np.arange(0,N)/self.N_alpha)
-        return wc
-
     #def apply_filter:
 
     #def apply_filter:
