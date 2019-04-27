@@ -61,11 +61,11 @@ def main():
     #at this point, flt is using the default hyperparameters
     #initialized inside the dtvf class
     #alpha must be a number between 0 and 1
-    flt=DiscTimeVarFilt(Ts = 1/fs, f_o = 100, f_inf = 1, k = 2, N_alpha = 100, alpha = 59/199)
+    flt=DiscTimeVarFilt(Ts = 1/fs, f_o = 50, f_inf = 1, k = 2, N_alpha = 100, alpha = 59/199)
     #may problem sa scaling right now
     
     #load sample data 1
-    df = pd.read_csv('data/belt90mmin_conv150mm/h1/ダイナミックBT2_最適PID.csv')
+    df = pd.read_csv('data/sample.csv')
     df = df.iloc[:,1:]
     df.plot()
     y_1 = flt.apply_filter(df,xs=0, ys=0)

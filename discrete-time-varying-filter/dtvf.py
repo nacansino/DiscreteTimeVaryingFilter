@@ -44,9 +44,7 @@ class DiscTimeVarFilt:
     
     def print_param(self):
         attrs = vars(self)
-        print(', '.join("%s: %s" % item for item in attrs.items()))
-        print("hello world")
-        return None
+        print('\n'.join("+%s: %s" % item for item in attrs.items()))
 
     def __init__(self, Ts, f_o = 200, f_inf = 0.01, k = 2, N_alpha = 150, alpha = 0.5):
         if not (alpha>0 and alpha<=1):
@@ -60,7 +58,36 @@ class DiscTimeVarFilt:
         self.Ts = Ts
         self.xi = math.sqrt(2**(k) - 1)
     #def set_params(self):
-    
-    #def apply_filter:
 
-    #def apply_filter:
+class filter_by_gaoptim:
+    def __init__(self, numparam):
+        return none
+    def make_member(constr = {
+            "f_o": (31,200),
+            "f_inf": (30, 0.01),
+            "k": (2, 3),
+            "N_alpha" : (50,400),
+            "alpha": (0, 1)}):
+        # this function creates a member of the population
+        # with each member being a dictionary of hyperparameters
+        # This returns a dictionary with random values for hyperparameters
+        
+        # The constraints on hyperparameters are in the "constraints" dictionary
+        # that indicates the max and minimum allowable values for each hyperparameter
+        
+        hyperparams = {
+                "f_o": np.random.uniform(*constr["f_o"]),
+                "f_inf": np.random.uniform(*constr["f_inf"]),
+                "k": np.random.uniform(*constr["k"]),
+                "N_alpha" : np.random.uniform(*constr["N_alpha"]),
+                "alpha": np.random.uniform(*constr["alpha"])
+                }
+        
+        return hyperparams
+        
+        
+    def init_population(size):
+        population = []
+        for i in range(0, size):
+            population.append(make_member())    
+        return population    
