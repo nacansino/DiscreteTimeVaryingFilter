@@ -18,7 +18,10 @@ class MyException(Exception):
 class DiscTimeVarFilt:
     def apply_filter(self, x, ys = 0, xs = 0):
         x=np.asarray(x)
+        if(x.ndim == 1):
+            x=x.reshape((x.shape[0],1))
         y=np.zeros(x.shape)
+        #convert x to (length, 1) if it is unidimensional
         N=x.shape[0]
         wc = self.w_inf + (self.w_o-self.w_inf)*self.alpha**(np.arange(0,N)/self.N_alpha)
         lmb = (-1)*((wc-2*self.xi/self.Ts)/(wc+2*self.xi/self.Ts))
