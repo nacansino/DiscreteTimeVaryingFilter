@@ -15,6 +15,7 @@ weight = 50 #weight
 
 n = np.arange(0,N)
 
+#Instantiate DiscTimeVarFilt class
 flt=DiscTimeVarFilt(Ts = 0.001)
 
 x=np.piecewise(n,
@@ -34,6 +35,17 @@ x_noise = x+noise
 
 y = flt.apply_filter(x_noise,xs=0, ys=0)
 
-
-plt.plot(n,x,n,x_noise,n,y)
+plt.plot(n, x, label="input")
+plt.plot(n, x_noise, label="input with noise")
+plt.plot(n, y, label="filtered output")
+plt.xlabel('time (s)')
+plt.ylabel('n')
+plt.title('waveform filtering using time-varying filters')
+plt.legend()
 plt.show()
+
+
+#at this point, flt is using the default hyperparameters
+#initialized inside the dtvf class
+
+#load real data
