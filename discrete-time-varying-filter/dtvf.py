@@ -12,6 +12,9 @@ DEBUG_MODE = False;
 if DEBUG_MODE:
     print("Welcome to DTVF : Debug Mode")
 
+def sigmoid(x):
+  return 1 / (1 + math.exp(-x))
+
 class MyException(Exception):
     pass
 
@@ -56,13 +59,41 @@ class DiscTimeVarFilt:
         self.w_o = f_o * 2 * math.pi
         self.w_inf = f_inf * 2 * math.pi
         self.Ts = Ts
-        self.xi = math.sqrt(2**(k) - 1)
-    #def set_params(self):
+        self.xi = math.sqrt(2**(k) - 1)   
+    #def filter_by_gaoptim(self):
 
 class filter_by_gaoptim:
-    def __init__(self, numparam):
-        return none
-    def make_member(constr = {
+    def __init__(self, Ts):
+        # initialize an instance of the filter
+        self.Ti = Ts
+        self.filt = DiscTimeVarFilt(Ts)
+    
+    def cal_pop_fitness(self, population, meas_time, input_x, realweight, sol_per_pop):
+        # This function calculates the fitness of the population
+        # against the given input dataframe input_x of MxN (M samples per N waveforms)
+        # meas_time is the index where 3s and mean of the waveforms is calculated
+        # This function returns the solution
+        
+        fitness = np.zeros(len(population))
+        for idx, val in enumerate(population):
+            # create filter for each member
+            ymem = DiscTimeVarFilt(Ts = self.Ts, **val)
+            #compute 3s and variation from mean (Xbar-x)
+            std3 = ymem[meas_time, :].std()*3
+            xbar_x = abs(ymem[meas_time, :].mean()-realweight)
+            # compute fitness: for now define fitness function as product of the two
+            # the higher the value, the better
+            fitness[idx] = 1/(std3*xbar_x)
+        # normalize fitness score
+        return fitness/np.sum(fitness)        
+    
+    def selection(population, fitness, num_parents):
+        # Pick members from the current generation
+        # to be the parents in the next generation
+        # crossover & mutation (in percentage)
+        
+    
+    def make_member(self, constr = {
             "f_o": (31,200),
             "f_inf": (30, 0.01),
             "k": (2, 3),
@@ -82,11 +113,10 @@ class filter_by_gaoptim:
                 "N_alpha" : np.random.uniform(*constr["N_alpha"]),
                 "alpha": np.random.uniform(*constr["alpha"])
                 }
-        
         return hyperparams
+    
         
-        
-    def init_population(size):
+    def init_population(self, size):
         population = []
         for i in range(0, size):
             population.append(make_member())    
