@@ -13,7 +13,7 @@ def wvf_plot(wvf):
     plt.xlabel('samples (n)')
     plt.ylabel('weight (grams)')
     plt.title('waveform filtering using time-varying filters')
-    # plt.legend()
+    plt.legend()
     plt.show()    
     
 def main():

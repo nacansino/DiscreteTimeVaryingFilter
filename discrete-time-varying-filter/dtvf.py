@@ -62,11 +62,12 @@ class DiscTimeVarFilt:
         self.xi = math.sqrt(2**(k) - 1)   
     #def filter_by_gaoptim(self):
 
-class filter_by_gaoptim:
+class GA_OPtimizeDTVF:
     def __init__(self, Ts):
-        # initialize an instance of the filter
-        self.Ti = Ts
-        self.filt = DiscTimeVarFilt(Ts)
+        # the only information that the optimizer needed to know
+        # is the sampling time Ts (1/fs)
+        self.Ts = Ts
+        # self.optim_filt = DiscTimeVarFilt(Ts)
     
     def cal_pop_fitness(self, population, meas_time, input_x, realweight, sol_per_pop):
         # This function calculates the fitness of the population
@@ -77,7 +78,9 @@ class filter_by_gaoptim:
         fitness = np.zeros(len(population))
         for idx, val in enumerate(population):
             # create filter for each member
-            ymem = DiscTimeVarFilt(Ts = self.Ts, **val)
+            param_mem = DiscTimeVarFilt(Ts = self.Ts, **val)
+            #apply filter created by the current member to the input
+            ymem = param_mem.apply_filter(input_x, ys=0, xs=0)
             #compute 3s and variation from mean (Xbar-x)
             std3 = ymem[meas_time, :].std()*3
             xbar_x = abs(ymem[meas_time, :].mean()-realweight)
@@ -91,9 +94,10 @@ class filter_by_gaoptim:
         # Pick members from the current generation
         # to be the parents in the next generation
         # crossover & mutation (in percentage)
-        
+        return None
     
-    def make_member(self, constr = {
+    # usage: 
+    def make_member(self = None, constr = {
             "f_o": (31,200),
             "f_inf": (30, 0.01),
             "k": (2, 3),
@@ -109,15 +113,14 @@ class filter_by_gaoptim:
         hyperparams = {
                 "f_o": np.random.uniform(*constr["f_o"]),
                 "f_inf": np.random.uniform(*constr["f_inf"]),
-                "k": np.random.uniform(*constr["k"]),
+                "k": np.random.randint(*constr["k"]),
                 "N_alpha" : np.random.uniform(*constr["N_alpha"]),
                 "alpha": np.random.uniform(*constr["alpha"])
                 }
         return hyperparams
     
-        
     def init_population(self, size):
         population = []
         for i in range(0, size):
-            population.append(make_member())    
+            population.append(self.make_member())    
         return population    
