@@ -15,6 +15,14 @@ def wvf_plot(wvf):
     plt.title('waveform filtering using time-varying filters')
     plt.legend()
     plt.show()    
+
+def genCDF(x):
+    # accept x as 1-d input.
+    cdf = np.zeros(x.shape[0])
+    cdf[0]=x[0]
+    for i in range(1,x.shape[0]):
+        cdf[i]=cdf[i-1]+x[i]
+    return cdf
     
 def main():
     #define constants
@@ -70,6 +78,7 @@ def main():
     df.plot()
     y_1 = flt.apply_filter(df,xs=0, ys=0)
     wvf_plot(y_1)
-    plt.plot(flt.wc_fxn(df.iloc[:,1]))
+    plt.plot(flt.wc_fxn(df.iloc[:,1])) 
+    
     
 main()

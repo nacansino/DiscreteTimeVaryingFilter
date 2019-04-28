@@ -4,6 +4,8 @@
 Created on Sun Apr 28 11:52:32 2019
 
 @author: jay
+
+DO NOT RUN THIS NOTEBOOK BY ITSELF. THIS IS JUST A REPOSITORY OF SAMPLE CODES DURING DEVELOPMENT
 """
 import dtvf
 import numpy as np
@@ -30,21 +32,34 @@ population = optimizer.init_population(size = 100)
 df = pd.read_csv('data/sample.csv')
 df = df.iloc[:,1:]
 
-fitness = optimizer.cal_pop_fitness(population = population, 
-                                    meas_time = 99, 
-                                    input_x = df, 
-                                    realweight = 22.51, 
-                                    sol_per_pop = 10)
 
-#select 5 fittest members
-fittest_idx = np.argsort(fitness)[-5:]
+# Run the genetic algorithm here
+num_generations = 20
+
+new_population = population
+for i in range(0,num_generations):
+    fitness = optimizer.cal_pop_fitness(population = new_population, 
+                                        meas_time = 99, 
+                                        input_x = df, 
+                                        realweight = 22.51)
+    #select 5 fittest members (with the biggest probability)
+    fittest_idx = np.argsort(fitness[:,1],)[:5]
+    #for now, limit parents to 5
+    new_population = optimizer.selection(new_population, fitness, 5)
+    print("Gen ",i,
+          ": top performer 3s,Xbar-x (",
+          fitness[fittest_idx[0],1], ", ",
+          fitness[fittest_idx[0],2], ")")
+    
+#compute 3s and Xbar-x of 5 fittest members
+
 
 fittest_member=[]
 for idx, mem in enumerate(fittest_idx):
     fittest_member.append(population[mem])
 
-#try for the fittest member
-flt=dtvf.DiscTimeVarFilt(Ts =0.001,**fittest_member[4])
+#try for the fittest member (lowest 3s)
+flt=dtvf.DiscTimeVarFilt(Ts =0.001,**fittest_member[0])
 y_1 = flt.apply_filter(df,xs=0, ys=0)
 
 # plot using plotly
@@ -64,10 +79,7 @@ for idx in range(0, y_1.shape[1]):
 
 iplot(traces)
 
-
 #main()
-
-
 
 #testing code for main filter
 df = pd.read_csv('data/sample.csv')
@@ -96,3 +108,35 @@ y[0, :] = (lmb[0]*ys+lmb_s[0]*(x[0,:] + xs))/lmb_sum[0]
 for n in np.arange(1,N):
     #compute wc and lambda
     y[n, :] = (lmb[n]*y[n-1, :]+lmb_s[n]*(x[n, :] + x[n-1, :]))/lmb_sum[n]
+    
+    
+#"zip" codes
+import itertools as it
+import random
+
+f = []
+k = []
+N_alpha = []
+alpha = []
+for idx, val in enumerate(parents):
+    f.append((val["f_o"], val["f_inf"]))
+    k.append(val["k"])
+    N_alpha.append(val["N_alpha"])
+    alpha.append(val["alpha"])
+    
+f_alpha = [(*val[0],val[1]) for idx, val in enumerate(it.product(f,alpha))]
+f_alpha_Nalpha = [(*val[0],val[1]) for idx, val in enumerate(it.product(f_alpha,N_alpha))]
+f_alpha_Nalpha_k = [(*val[0],val[1]) for idx, val in enumerate(it.product(f_alpha_Nalpha,k))]
+
+#get 90% from parents
+newpop_params = random.sample(f_alpha_Nalpha_k, k=80)
+#convert newpop(expressed in tuples) to list of dictionaries
+newpop = []
+for i,val in enumerate(newpop_params):
+    newpop.append({"f_o": val[0],
+                 "f_inf": val[1],
+                 "k": val[4],
+                 "N_alpha" : val[3],
+                 "alpha": val[2]})
+
+#spawn 5 members from random element 
