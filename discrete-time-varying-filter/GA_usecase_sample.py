@@ -8,6 +8,19 @@ Created on Sun Apr 28 11:52:32 2019
 import dtvf
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
+
+def wvf_plot(wvf):
+    #plot a checkweigher waveform using matplotlib
+    x = np.asarray(wvf)
+    n = np.arange(0, x.shape[0])
+    plt.plot(x)
+    plt.xlabel('samples (n)')
+    plt.ylabel('weight (grams)')
+    plt.title('waveform filtering using time-varying filters')
+    plt.legend()
+    plt.show()    
+    
 
 #def main():
 optimizer=dtvf.GA_OPtimizeDTVF(Ts = 0.001)
@@ -53,3 +66,33 @@ iplot(traces)
 
 
 #main()
+
+
+
+#testing code for main filter
+df = pd.read_csv('data/sample.csv')
+df = df.iloc[:,1:]
+x=np.asarray(df)
+if(x.ndim == 1):
+    x=x.reshape((x.shape[0],1))
+y=np.zeros(x.shape)
+
+Ts=0.001
+w_o = 114.62473467351174
+w_inf = 6.891812475300544
+k = 2,
+N_alpha = 53.42737302270834,
+alpha = 0.1600688326505907
+xi = 1.7
+
+N=x.shape[0]
+wc = w_inf + (w_o-w_inf)*alpha**(np.arange(0,N)/N_alpha)
+lmb = (-1)*((wc-2*xi/Ts)/(wc+2*xi/Ts))
+lmb_s = (1-lmb)/2
+
+#compute filtered value
+lmb_sum=lmb+lmb_s
+y[0, :] = (lmb[0]*ys+lmb_s[0]*(x[0,:] + xs))/lmb_sum[0]
+for n in np.arange(1,N):
+    #compute wc and lambda
+    y[n, :] = (lmb[n]*y[n-1, :]+lmb_s[n]*(x[n, :] + x[n-1, :]))/lmb_sum[n]
