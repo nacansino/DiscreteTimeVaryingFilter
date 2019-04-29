@@ -150,7 +150,7 @@ class GA_OPtimizeDTVF:
         f_alpha_Nalpha_k = [(*val[0],val[1]) for idx, val in enumerate(it.product(f_alpha_Nalpha,k))]
         
         #get 90% from parents
-        newpop_params = random.sample(f_alpha_Nalpha_k, k=80)
+        newpop_params = random.sample(f_alpha_Nalpha_k, k=int(0.80*N))
         #convert newpop(expressed in tuples) to list of dictionaries
         newpop = []
         for i,val in enumerate(newpop_params):
@@ -166,10 +166,28 @@ class GA_OPtimizeDTVF:
 #            parents.append(population[draw_idx])
 #            #
         # fill the remaining 10% with new randomly spawned members
-        newpop_mutation = self.init_population(N-len(newpop))
-        newpop += newpop_mutation
+        newpop_newmems = self.init_population(N-len(newpop))
+        newpop += newpop_newmems
         return newpop
     
+    def mutation(self, population, rate = 0.2):
+        #varies the population's parameters by the amount of indicated rate
+        mutated_population = []
+        for i, mem in enumerate(population):
+            # Python does not allow updating dictionary while iterating over it
+            # create new dictionary (member) instead
+            newmem = dict()
+            for key, val in mem.items():
+                # increment/decrement the parameter by +=rate(%) amount
+                newval = val + val*rate*(np.random.rand()-0.5)*2
+                if (key != "k"):
+                    if (key == "alpha"):
+                        newval = min(max(0.0000001, newval),1)
+                    newmem[key] = newval
+                else:
+                    newmem[key] = val
+            mutated_population.append(newmem)
+        return mutated_population
     # usage: 
     def make_member(self = None, constr = {
             "f_o": (31,200),
