@@ -111,11 +111,11 @@ class DTVFOptimizerByGA:
             cdf[i] = cdf[i - 1] + x_in[i]
         return cdf
 
-    def cal_pop_fitness(self, population, meas_time, input_x, realweight):
-        # This function calculates the fitness of the population
-        # against the given input dataframe input_x of MxN (M samples per N waveforms)
-        # meas_time is the index where 3s and mean of the waveforms is calculated
-        # This function returns the solution
+    def cal_pop_fitness(self, population, meas_time, input_x, real_weight, sx_in = 0.4, sy_in = 0.3):
+        """This function calculates the fitness of the population
+           against the given input dataframe input_x of MxN (M samples per N waveforms)
+           meas_time is the index where 3s and mean of the waveforms is calculated
+           This function returns the solution"""
 
         fitness = np.zeros((len(population), 3))
         for idx, val in enumerate(population):
@@ -125,13 +125,13 @@ class DTVFOptimizerByGA:
             ymem = param_mem.apply_filter(input_x, ys=0, xs=0)
             # compute 3s and variation from mean (Xbar-x)
             std3 = ymem[meas_time, :].std() * 3
-            xbar_x = abs(ymem[meas_time, :].mean() - realweight)
+            xbar_x = abs(ymem[meas_time, :].mean() - real_weight)
             # Compute fitness
             # The fitness function is a lambda fxn.
             # It is either supplied as an argument or it defaults to gaussff()
             fitness[idx, 1] = std3
             fitness[idx, 2] = xbar_x
-        fitness[:, 0] = gaussff(fitness[:, 1], fitness[:, 2], 0.4, 0.3)
+        fitness[:, 0] = gaussff(fitness[:, 1], fitness[:, 2], sx_in, sy_in)
         # normalize fitness score
         return fitness
 
@@ -207,10 +207,10 @@ class DTVFOptimizerByGA:
     # usage:
 
     def make_member(self, constr={
-            "f_o": (31, 200),
-            "f_inf": (30, 0.01),
+            "f_o": (501, 1000),
+            "f_inf": (500, 0.001),
             "k": (2, 4),
-            "n_alpha": (50, 400),
+            "n_alpha": (1, 2000),
             "alpha": (0, 1)}):
         """ this function creates a member of the population
             with each member being a dictionary of hyperparameters
