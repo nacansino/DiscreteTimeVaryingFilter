@@ -5,8 +5,19 @@ Created on Mon Apr 29 00:14:44 2019
 
 @author: jay
 This code demostrates the current filter optimization by GA
+
+Apr29 00:14
 As of this writing, the GA code is running correctly but it isn't evolving as expected.
 We will try to change the fitness function 
+
+Apr29 14:47
+Added GA_OptimizeDTVF.optimize.mutation()
+This seems to add a certain degree of freedom to the optimizer.
+
+Apr29 16:57
+Created Gaussian fitness function
+The GFF seems to work but it depends upon the initial population.
+If the fittest member is in a false direction, there is a tendency to fall to a false minimum
 """
 
 import dtvf
@@ -18,7 +29,6 @@ import pdb #breakpoint generator
 def wvf_plot(wvf):
     #plot a checkweigher waveform using matplotlib
     x = np.asarray(wvf)
-    n = np.arange(0, x.shape[0])
     plt.plot(x)
     plt.xlabel('samples (n)')
     plt.ylabel('weight (grams)')
@@ -39,6 +49,9 @@ df = df.iloc[:,1:]
 # Run the genetic algorithm here
 num_generations = 20
 
+#record fittest member for each generation
+
+fittest_per_generation=[]
 new_population = population
 for i in range(0,num_generations):
     fitness = optimizer.cal_pop_fitness(population = new_population, 
@@ -55,7 +68,9 @@ for i in range(0,num_generations):
     #print params for the fittest
     bestmember=[print(keys,values) for keys,values in new_population[fittest_idx[0]].items()]
     print("\n")
-    pdb.set_trace()
+    fittest_per_generation.append(new_population[fittest_idx[0]])
+    #pdb.set_trace()
+    
     
     #generate new population
     #for now, limit parents to 5

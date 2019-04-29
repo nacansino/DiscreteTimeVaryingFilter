@@ -23,6 +23,9 @@ def elu(x, alpha):
     else:
         return alpha * (math.e**x -1)
     
+def gaussff(x,y,sx,sy):
+    return 100*np.exp(-1*((x**2/(2*sx**2))+(y**2/(2*sy**2))))
+    
 def exp(x, tau):
     #exponential fitness fxn
     return math.e**(x/tau)
@@ -112,12 +115,11 @@ class GA_OPtimizeDTVF:
             std3 = ymem[meas_time, :].std()*3
             xbar_x = abs(ymem[meas_time, :].mean()-realweight)
             # Compute fitness 
-            # for now, define fitness as some random tailored fxn
-            # the higher the value, the better
-            # 0.5*self.exp(0.4-std3, 0.2)+0.5*self.exp(0.3-xbar_x, 0.5)
+            # The fitness function is a lambda fxn.
+            # It is either supplied as an argument or it defaults to gaussff()
             fitness[idx, 1] = std3
             fitness[idx, 2] = xbar_x
-        fitness[:,0]=0.7*(1/fitness[:,1])/np.sum(1/fitness[:,1])+0.3*(1/fitness[:,2])/np.sum(1/fitness[:,2])
+        fitness[:,0]=gaussff(fitness[:,1],fitness[:,2],0.4,0.3)
         # normalize fitness score
         return fitness
     
