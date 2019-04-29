@@ -4,7 +4,6 @@
 #Author: Przemyslaw Pietrzak
 #https://ieeexplore.ieee.org/document/5661899
 
-import math
 import numpy as np
 import itertools as it
 import random
@@ -15,20 +14,20 @@ if DEBUG_MODE:
     print("Welcome to DTVF : Debug Mode")
 
 def sigmoid(x):
-  return 1 / (1 + math.exp(-x))
+  return 1 / (1 + np.exp(-x))
 
 def elu(x, alpha):
     if (x >= 0):
         return x
     else:
-        return alpha * (math.e**x -1)
+        return alpha * (np.e**x -1)
     
 def gaussff(x,y,sx,sy):
     return 100*np.exp(-1*((x**2/(2*sx**2))+(y**2/(2*sy**2))))
     
 def exp(x, tau):
     #exponential fitness fxn
-    return math.e**(x/tau)
+    return np.e**(x/tau)
 
 def neg_relu(x, inf_point):
     if (x <= inf_point):
@@ -77,10 +76,10 @@ class DiscTimeVarFilt:
         self.alpha = alpha
         self.N_alpha = N_alpha
         self.k = k
-        self.w_o = f_o * 2 * math.pi
-        self.w_inf = f_inf * 2 * math.pi
+        self.w_o = f_o * 2 * np.pi
+        self.w_inf = f_inf * 2 * np.pi
         self.Ts = Ts
-        self.xi = math.sqrt(2**(k) - 1)   
+        self.xi = np.sqrt(2**(k) - 1)   
     #def filter_by_gaoptim(self):
 
 class GA_OPtimizeDTVF:

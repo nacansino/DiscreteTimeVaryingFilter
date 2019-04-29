@@ -24,6 +24,7 @@ import csv
 import dtvf
 import numpy as np
 import pandas as pd
+import time
 import matplotlib.pyplot as plt
 #import pdb #breakpoint generator
 
@@ -141,10 +142,16 @@ def plot_learning_curve(fittest_scores):
     fig.tight_layout()  # otherwise the right y-label is slightly clipped
     plt.show()
 
+timestr = time.strftime("%Y%m%d-%H%M%S")
+
 #write fittest_scores and fittest_per_generation
-def write_to_csv(fittest_scores, fittest_per_generation, filename="names.csv"):
+def write_to_csv(fittest_scores, fittest_per_generation, filename="out_"+timestr+".csv"):
     with open(filename, 'w', newline='') as csvfile:
-    fieldnames = ['f_o', 'f_inf', 'k', 'alpha', 'N_alpha']
-    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-    writer.writeheader()
-    [writer.writerow(val) for idx,val in enumerate(fittest_per_generation)]
+        fieldnames = ['f_o', 'f_inf', 'k', 'alpha', 'N_alpha', 'fit-score', '3s', 'Xbar-x']
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer.writeheader()
+        for idx,val in enumerate(fittest_per_generation):
+            val['fit-score']=fittest_scores[idx,0]
+            val['3s']=fittest_scores[idx,1]
+            val['Xbar-x']=fittest_scores[idx,2]
+            writer.writerow(val)
