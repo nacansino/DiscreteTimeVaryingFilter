@@ -21,15 +21,16 @@ If the fittest member is in a false direction, there is a tendency to fall to a 
 """
 
 import csv
-import dtvf
+import time
 import numpy as np
 import pandas as pd
-import time
 import matplotlib.pyplot as plt
+import dtvf
+
 #import pdb #breakpoint generator
 
 def wvf_plot(wvf):
-    #plot a checkweigher waveform using matplotlib
+    """plot a checkweigher waveform using matplotlib"""
     x = np.asarray(wvf)
     plt.plot(x)
     plt.xlabel('samples (n)')
@@ -106,7 +107,7 @@ def main():
 
     popsize=700
 
-    optimizer = dtvf.GA_OPtimizeDTVF(Ts = 0.001)
+    optimizer = dtvf.DTVFOptimizerByGA(ts = 0.001)
     population = optimizer.init_population(size = popsize)
     
     #run evolution
@@ -147,7 +148,7 @@ timestr = time.strftime("%Y%m%d-%H%M%S")
 #write fittest_scores and fittest_per_generation
 def write_to_csv(fittest_scores, fittest_per_generation, filename="out_"+timestr+".csv"):
     with open(filename, 'w', newline='') as csvfile:
-        fieldnames = ['f_o', 'f_inf', 'k', 'alpha', 'N_alpha', 'fit-score', '3s', 'Xbar-x']
+        fieldnames = ['f_o', 'f_inf', 'k', 'alpha', 'n_alpha', 'fit-score', '3s', 'Xbar-x']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
         for idx,val in enumerate(fittest_per_generation):
