@@ -12,6 +12,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
+
 def wvf_plot(wvf):
     #plot a checkweigher waveform using matplotlib
     x = np.asarray(wvf)
