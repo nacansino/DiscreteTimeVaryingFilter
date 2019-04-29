@@ -1,0 +1,40 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Apr 29 23:43:01 2019
+
+@author: jay
+
+This is a demo usage of the FIRFilterA (ffa.py) class
+"""
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import ffa
+
+def wvf_plot(wvf):
+    """plot a checkweigher waveform using matplotlib"""
+    x = np.asarray(wvf)
+    plt.plot(x)
+    plt.xlabel('samples (n)')
+    plt.ylabel('weight (grams)')
+    plt.title('waveform filtering using time-varying filters')
+    plt.legend()
+    plt.show()    
+
+def main():
+    """main codeblock"""
+    df = pd.read_csv('data/sample.csv')
+    df = df.iloc[:,1:]
+    x = np.asarray(df)
+    
+    #create filter
+    fir_filter = ffa.FIRFilterA(taps = 17,
+                            f_c = 1,
+                            f_s = 1000,
+                            filter_type = "low", window = "hamm")
+    y = fir_filter.apply_filter(x)
+    wvf_plot(y)
+    
+main()
