@@ -43,10 +43,14 @@ class FIRFilterA:
         k = np.arange(0, self.taps)
         # Initialize coef
         coef = np.zeros(k.size)
-
+        valid_window = ["rect", "hann", "hamm", "bman", "bmanh"]
+        #check window
+        if window not in valid_window:
+            raise ValueError('"',window, '" window not supported')
+            
         if self.window == "rect":
             # rect
-            coef = np.ones((self.taps, 1))
+            coef = np.ones((self.taps,))
         elif self.window == "hann":
             # hanning
             coef = 0.5 - 0.5 * np.cos(2 * np.pi * (k + 1) / (self.taps + 1))
@@ -63,7 +67,7 @@ class FIRFilterA:
             coef = .423 - .498 * np.cos(2 * np.pi * (k + 1) / (self.taps + 1)) + \
                 0.0792 * np.cos(4 * np.pi * (k + 1) / (self.taps + 1))
         else:
-            coef = np.ones((self.taps, 1))
+            coef = np.ones((self.taps,))
 
         # normalize
         b_coeff = np.multiply(coef, impr)
