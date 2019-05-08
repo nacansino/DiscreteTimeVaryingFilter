@@ -40,7 +40,7 @@ def wvf_plot(wvf):
     plt.show()    
     
 
-def evolution(init_population, input_x, optimizer, num_generations, fittest_threshold, size, mutation_rate=0.2):
+def evolution(init_population, input_x, optimizer, num_generations, meas_time, fittest_threshold, size, real_weight, mutation_rate=0.2, sx_in = 0.4, sy_in = 0.3):
     
     #define re-evolve variable
     re_evolve=True
@@ -51,9 +51,11 @@ def evolution(init_population, input_x, optimizer, num_generations, fittest_thre
         re_evolve=False #this variable changes to True if the evolution fails
         for i in range(num_generations):
             fitness = optimizer.cal_pop_fitness(population = new_population, 
-                                                meas_time = 99, 
+                                                meas_time = meas_time, 
                                                 input_x = input_x, 
-                                                realweight = 22.51)
+                                                real_weight = real_weight,
+                                                sx_in = sx_in,
+                                                sy_in = sy_in)
             #select 5 fittest members (with the biggest probability)
             fittest_idx = np.argsort(fitness[:,1],)[:5]
             
@@ -95,17 +97,25 @@ def evolution(init_population, input_x, optimizer, num_generations, fittest_thre
         
 
 def main():
+    """main program"""
     #load sample data 1
-    df = pd.read_csv('data/sample.csv')
+    df = pd.read_csv('data/sample-risou2.csv')
     df = df.iloc[:,1:]
     
     # For the optimizer
     num_generations = 20
 
-    #set fittest threshold
-    fittest_threshold = 0.005
+    # Set fittest threshold
+    fittest_threshold = 1e-120
 
-    popsize=700
+    # measuring time
+    meas_time = 99
+
+    #real_weight
+    real_weight = 26.51
+    
+    #set population size
+    popsize=500
 
     optimizer = dtvf.DTVFOptimizerByGA(ts = 0.001)
     population = optimizer.init_population(size = popsize)
@@ -115,10 +125,15 @@ def main():
     return evolution(init_population = population,
                                       optimizer = optimizer,
                                       input_x = df,
+                                      meas_time = meas_time,
                                       num_generations = num_generations,
                                       fittest_threshold = fittest_threshold,
                                       size = popsize,
-                                      mutation_rate = 0.3)
+                                      mutation_rate = 0.3,
+                                      real_weight = real_weight,
+                                      sx_in = 3,
+                                      sy_in = 0.4
+                                      )
     
 fittest_scores, fittest_per_generation=main()
 
