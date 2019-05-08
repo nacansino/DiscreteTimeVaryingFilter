@@ -45,8 +45,8 @@ class FIRFilterA:
         coef = np.zeros(k.size)
         valid_window = ["rect", "hann", "hamm", "bman", "bmanh"]
         #check window
-        if window not in valid_window:
-            raise ValueError('"',window, '" window not supported')
+        if self.window not in valid_window:
+            raise ValueError('"%s" window not supported' % self.window)
             
         if self.window == "rect":
             # rect
