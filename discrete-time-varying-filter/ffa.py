@@ -80,6 +80,8 @@ class FIRFilterA:
          this fxn expects an input_x w/c is a numpy 2d array MxN
          where M is the # of samples and N is the number of waveforms
          b should be a 1d numpy array"""
+        
+        input_x = np.asarray(input_x) #convert to numpy array first
         m_x, n_x = input_x.shape
         m_b, = self.b_coeff.shape
         y_out = np.zeros((m_x + m_b - 1, n_x))
