@@ -43,14 +43,10 @@ class FIRFilterA:
         k = np.arange(0, self.taps)
         # Initialize coef
         coef = np.zeros(k.size)
-        valid_window = ["rect", "hann", "hamm", "bman", "bmanh"]
-        #check window
-        if self.window not in valid_window:
-            raise ValueError('"%s" window not supported' % self.window)
-            
+
         if self.window == "rect":
             # rect
-            coef = np.ones((self.taps,))
+            coef = np.ones((self.taps, 1))
         elif self.window == "hann":
             # hanning
             coef = 0.5 - 0.5 * np.cos(2 * np.pi * (k + 1) / (self.taps + 1))
@@ -67,7 +63,7 @@ class FIRFilterA:
             coef = .423 - .498 * np.cos(2 * np.pi * (k + 1) / (self.taps + 1)) + \
                 0.0792 * np.cos(4 * np.pi * (k + 1) / (self.taps + 1))
         else:
-            coef = np.ones((self.taps,))
+            coef = np.ones((self.taps, 1))
 
         # normalize
         b_coeff = np.multiply(coef, impr)
@@ -80,8 +76,6 @@ class FIRFilterA:
          this fxn expects an input_x w/c is a numpy 2d array MxN
          where M is the # of samples and N is the number of waveforms
          b should be a 1d numpy array"""
-        
-        input_x = np.asarray(input_x) #convert to numpy array first
         m_x, n_x = input_x.shape
         m_b, = self.b_coeff.shape
         y_out = np.zeros((m_x + m_b - 1, n_x))
